@@ -12,7 +12,6 @@ const createShortUrl = async (req, res) => {
             });
         }
 
-        // Validate URL
         try {
             new URL(originalUrl);
         } catch {
@@ -21,7 +20,6 @@ const createShortUrl = async (req, res) => {
             });
         }
 
-        // Check duplicate
         const existing = await Url.findOne({
             where: { originalUrl }
         });
@@ -68,9 +66,6 @@ const getOriginalUrl = async (req, res) => {
         res.status(200).json({
             originalUrl: url.originalUrl
         });
-
-        // Optional:
-        // res.redirect(url.originalUrl);
 
     } catch (error) {
         res.status(500).json({
@@ -125,11 +120,9 @@ const deleteUrl = async (req, res) => {
         });
 
         if (!url) {
-
             return res.status(404).json({
                 message: "URL not found"
             });
-
         }
 
         await url.destroy();
@@ -160,21 +153,17 @@ const getStats = async (req, res) => {
         });
 
         if (!url) {
-
             return res.status(404).json({
                 message: "URL not found"
             });
-
         }
 
         res.status(200).json({
-
             originalUrl: url.originalUrl,
             shortCode: url.shortCode,
             accessCount: url.accessCount,
             createdAt: url.createdAt,
             updatedAt: url.updatedAt
-
         });
 
     } catch (error) {
@@ -187,12 +176,46 @@ const getStats = async (req, res) => {
 
 };
 
+// Redirect using Short Code
+const redirectToOriginalUrl = async (req, res) => {
+
+    try {
+
+        const { shortCode } = req.params;
+
+        const url = await Url.findOne({
+            where: { shortCode }
+        });
+
+        if (!url) {
+            return res.status(404).send("Short URL not found");
+        }
+
+        url.accessCount += 1;
+        await url.save();
+
+        res.redirect(url.originalUrl);
+
+    }  catch (error) {
+
+    console.log("CREATE URL ERROR:");
+    console.log(error);
+
+    res.status(500).json({
+        message: error.message
+    });
+    }
+
+
+};
+
 module.exports = {
 
     createShortUrl,
     getOriginalUrl,
     updateUrl,
     deleteUrl,
-    getStats
+    getStats,
+    redirectToOriginalUrl
 
 };

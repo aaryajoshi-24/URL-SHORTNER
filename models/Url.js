@@ -9,9 +9,9 @@ const Url = sequelize.define("Url", {
     },
 
     originalUrl: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
+    type: DataTypes.TEXT,
+    allowNull: false
+},
 
     shortCode: {
         type: DataTypes.STRING,

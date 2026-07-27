@@ -8,7 +8,8 @@ const {
     getOriginalUrl,
     updateUrl,
     deleteUrl,
-    getStats
+    getStats,
+    redirectToOriginalUrl
 
 } = require("../controllers/urlController");
 
@@ -21,5 +22,8 @@ router.put("/urls/:shortCode", updateUrl);
 router.delete("/urls/:shortCode", deleteUrl);
 
 router.get("/urls/:shortCode/stats", getStats);
+
+
+router.get("/:shortCode", redirectToOriginalUrl);
 
 module.exports = router;
